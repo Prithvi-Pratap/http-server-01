@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personal Accounts Management</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .account-container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin: 10px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+
+    .account-container:hover {
+      transform: scale(1.05);
+    }
+
+    .account-container h2 {
+      color: #3498db;
+    }
+
+    .balance {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .update-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    input {
+      padding: 8px;
+      margin-right: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      transition: border-color 0.3s;
+    }
+
+    input:hover {
+      border-color: #3498db;
+    }
+
+    button {
+      padding: 8px 16px;
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    hr {
+      width: 100%;
+      margin: 20px 0;
+      border: none;
+      border-top: 1px solid #ddd;
+    }
+
+    #chatContainer {
+      width: 300px;
+      margin-top: 20px;
+    }
+
+    #chatMessages {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      background-color: #fff;
+    }
+
+    #chatInput {
+      width: 100%;
+      padding: 8px;
+      margin-top: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    #chatInput:focus {
+      outline: none;
+      border-color: #3498db;
+    }
+
+    #sendButton {
+      width: 100%;
+      padding: 8px;
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 10px;
+    }
+
+    #sendButton:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Personal Accounts Management</h1>
+
+  <div class="account-container">
+    <h2>Account 1</h2>
+    <p class="balance">Balance: $<span id="balance1">1000</span></p>
+    <div class="update-container">
+      <input type="number" id="amount1" placeholder="Enter amount">
+      <button onclick="updateBalance(1)">Update</button>
+    </div>
+  </div>
+
+  <div class="account-container">
+    <h2>Account 2</h2>
+    <p class="balance">Balance: $<span id="balance2">1500</span></p>
+    <div class="update-container">
+      <input type="number" id="amount2" placeholder="Enter amount">
+      <button onclick="updateBalance(2)">Update</button>
+    </div>
+  </div>
+
+  <hr>
+
+  <h1>Chat Room</h1>
+
+  <div id="chatContainer">
+    <ul id="chatMessages"></ul>
+    <input type="text" id="chatInput" placeholder="Type your message...">
+    <button id="sendButton" onclick="sendMessage()">Send</button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    // Update balance on the page
+    socket.on('balanceUpdate', ({ accountId, newBalance }) => {
+      document.getElementById(`balance${accountId}`).textContent = newBalance;
+    });
+
+    // Receive and display chat messages
+    socket.on('chatMessage', (message) => {
+      const chatMessages = document.getElementById('chatMessages');
+      const li = document.createElement('li');
+      li.textContent = message;
+      chatMessages.appendChild(li);
+      chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to the latest message
+    });
+
+    // Function to update balance
+    function updateBalance(accountId) {
+      const amountInput = document.getElementById(`amount${accountId}`);
+      const amount = parseInt(amountInput.value, 10);
+      if (!isNaN(amount)) {
+        fetch(`/api/accounts/${accountId}/update-balance`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ amount }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+        });
+      } else {
+        console.log('Invalid amount');
+      }
+    }
+
+    // Function to send chat messages
+    function sendMessage() {
+      const chatInput = document.getElementById('chatInput');
+      const message = chatInput.value;
+      if (message.trim() !== '') {
+        socket.emit('chatMessage', message);
+        chatInput.value = '';
+      }
+    }
+  </script>
+
+</body>
+</html>
