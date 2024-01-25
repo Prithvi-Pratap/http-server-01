@@ -9,7 +9,7 @@ const io = socketIO(server);
 
 const PORT = process.env.PORT || 3000;
 
-// Dummy data for personal accounts
+// Dummy data  
 const accounts = [
   { id: 1, username: 'user1', balance: 1000 },
   { id: 2, username: 'user2', balance: 1500 },
@@ -53,12 +53,12 @@ app.post('/api/accounts/:id/update-balance', (req, res) => {
 io.on('connection', (socket) => {
   console.log('User connected');
 
-  // Listen for chat messages
+ 
   socket.on('chatMessage', (message) => {
     io.emit('chatMessage', message); // Broadcast the message to all connected clients
   });
 
-  // Listen for disconnect
+ 
   socket.on('disconnect', () => {
     console.log('User disconnected');
   });
