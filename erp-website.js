@@ -13,13 +13,13 @@ const PORT = process.env.PORT || 3000;
 const accounts = [
   { id: 1, username: 'user1', balance: 1000 },
   { id: 2, username: 'user2', balance: 1500 },
-  // Add more accounts as needed
+  
 ];
 
-// Middleware to parse JSON requests
+ 
 app.use(bodyParser.json());
 
-// Serve HTML page for personal accounts management
+ 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/accounts.html');
 });
