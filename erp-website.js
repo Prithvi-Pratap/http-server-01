@@ -55,7 +55,7 @@ io.on('connection', (socket) => {
 
  
   socket.on('chatMessage', (message) => {
-    io.emit('chatMessage', message); // Broadcast the message to all connected clients
+    io.emit('chatMessage', message); 
   });
 
  
@@ -64,10 +64,9 @@ io.on('connection', (socket) => {
   });
 });
 
-// Serve static files
 app.use(express.static('public'));
 
-// Start the server
+
 server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
