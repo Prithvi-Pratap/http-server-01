@@ -1,0 +1,3 @@
+mongoDB: mongodb+srv://Prithvi-Pratap:4BSujKxangVtm4iW@cluster0.ewwdqzf.mongodb.net/
+
+postgres: postgresql://pratapprithvi768:3eAc7ZuCaTql@ep-silent-cell-a5if3md7.us-east-2.aws.neon.tech/neondb?sslmode=require
